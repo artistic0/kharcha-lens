@@ -12,7 +12,7 @@ startNetworkWatch()
 // Cache the app for offline use (production only; the dev server needs the network for HMR).
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
+    navigator.serviceWorker.register(`${import.meta.env.BASE_URL}sw.js`).catch(() => {
       // Offline caching is a convenience; the app works without it.
     })
   })

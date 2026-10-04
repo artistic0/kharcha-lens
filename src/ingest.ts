@@ -7,7 +7,7 @@ import type { EngineApi, WorkerOutcome } from './worker/engine.worker'
  * Both workers start immediately, so every file the app will ever need is loaded with the
  * page. After that the app makes no requests at all (the footer counter proves it).
  */
-pdfjs.GlobalWorkerOptions.workerPort = new Worker(new URL('pdfjs-dist/build/pdf.worker.min.mjs', import.meta.url), {
+pdfjs.GlobalWorkerOptions.workerPort = new Worker(new URL('./worker/pdf.worker.ts', import.meta.url), {
   type: 'module',
 })
 const engine = Comlink.wrap<EngineApi>(

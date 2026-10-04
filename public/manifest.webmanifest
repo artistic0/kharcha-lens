@@ -2,9 +2,10 @@
   "name": "KharchaLens — private statement analyzer",
   "short_name": "KharchaLens",
   "description": "See where your money goes. Your bank statement never leaves your device.",
-  "start_url": "/",
+  "start_url": "./",
+  "scope": "./",
   "display": "standalone",
   "background_color": "#f9f9f7",
   "theme_color": "#3b35b5",
-  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+  "icons": [{ "src": "favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
 }

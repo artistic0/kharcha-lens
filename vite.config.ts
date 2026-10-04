@@ -6,6 +6,8 @@ import { privacy } from './tools/vite-privacy.ts'
 
 // https://vite.dev/config/
 export default defineConfig({
+  // '/' for Cloudflare and local runs; '/<repo>/' for GitHub Pages (set by the deploy workflow).
+  base: process.env.BASE_PATH || '/',
   plugins: [react(), tailwindcss(), privacy()],
   build: {
     target: 'es2022',

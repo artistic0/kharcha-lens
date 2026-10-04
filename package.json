@@ -10,7 +10,8 @@
     "lint": "oxlint",
     "test": "vitest run",
     "e2e": "playwright test",
-    "synth": "tsx tools/synth/write.ts"
+    "synth": "tsx tools/synth/write.ts",
+    "e2e:ghpages": "playwright test -c playwright.ghpages.config.ts"
   },
   "dependencies": {
     "comlink": "^4.4.2",

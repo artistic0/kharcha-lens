@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+import './lockdown' // first: no network APIs for anything below
 import * as Comlink from 'comlink'
 import { parseGridStatement, parsePdfStatement, StatementError } from '../engine/parse'
 import { csvToGrid, workbookToGrids } from '../engine/sheet'

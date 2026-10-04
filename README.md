@@ -90,6 +90,22 @@ CSV/XLSX ───────────────────────�
 
   Every transaction shows why it got its category.
 
+## Deploy (GitHub Pages)
+
+`.github/workflows/deploy-pages.yml` publishes to `https://<user>.github.io/<repo>/` on every push to `main`. Before publishing, it:
+- runs the unit tests and lint
+- builds with `BASE_PATH=/<repo>/`
+- checks that the privacy policy is in the built page
+
+One-time setup: go to **Settings → Pages → Build and deployment → Source** and choose **GitHub Actions**.
+
+GitHub Pages can't send custom HTTP headers, so the protection works like this:
+- **The page.** The CSP `<meta>` tag in `index.html` still blocks every fetch, XHR, WebSocket and form post.
+- **The workers.** Workers don't inherit the page's `<meta>` policy. Instead, `src/worker/lockdown.ts` removes `fetch`, `XMLHttpRequest`, `WebSocket`, `EventSource` and `importScripts` before any library code runs.
+- **Not available here:** `frame-ancestors` and `Permissions-Policy`, which only exist as headers. Use Cloudflare Pages if you want those too.
+
+To prove this setup locally, `npm run e2e:ghpages` serves the build under `/kharcha-lens/` with **no** headers. It then checks for zero network requests during an offline upload, that sending data is blocked, and that the app works offline.
+
 ## Deploy (Cloudflare Pages)
 
 1. Push the repo to GitHub, then create a Cloudflare Pages project from it.

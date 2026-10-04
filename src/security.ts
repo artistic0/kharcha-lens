@@ -32,22 +32,22 @@ export const COMMON_HEADERS: Record<string, string> = {
   'Permissions-Policy': 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), serial=(), hid=()',
 }
 
-export function headersFor(path: string): Record<string, string> {
-  const csp = path === '/sw.js' ? SW_CSP : PAGE_CSP
+export function headersFor(path: string, base = '/'): Record<string, string> {
+  const csp = path === `${base}sw.js` ? SW_CSP : PAGE_CSP
   return { ...COMMON_HEADERS, 'Content-Security-Policy': csp }
 }
 
 /** Cloudflare Pages `_headers` file. `! Header` detaches the site-wide value for sw.js. */
-export function renderHeadersFile(): string {
+export function renderHeadersFile(base = '/'): string {
   const block = (h: Record<string, string>) =>
     Object.entries(h)
       .map(([k, v]) => `  ${k}: ${v}`)
       .join('\n')
   return [
     '/*',
-    block(headersFor('/')),
+    block(headersFor('/', base)),
     '',
-    '/sw.js',
+    `${base}sw.js`,
     '  ! Content-Security-Policy',
     `  Content-Security-Policy: ${SW_CSP}`,
     '  Cache-Control: no-cache',
