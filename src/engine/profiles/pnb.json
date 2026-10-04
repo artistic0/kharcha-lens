@@ -1,0 +1,16 @@
+{
+  "id": "pnb",
+  "name": "Punjab National Bank",
+  "beta": true,
+  "detect": ["PUNJAB\\s*NATIONAL\\s*BANK", "\\bPUNB0[A-Z0-9]{6}\\b"],
+  "continuation": "below",
+  "columns": {
+    "date": ["txn date", "transaction date"],
+    "narration": ["description", "narration", "particulars"],
+    "ref": ["cheque no", "instrument no"],
+    "debit": ["dr amount", "debit amount", "withdrawal"],
+    "credit": ["cr amount", "credit amount", "deposit"],
+    "balance": ["balance"],
+    "serial": ["txn no"]
+  }
+}

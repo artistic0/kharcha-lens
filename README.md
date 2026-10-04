@@ -10,6 +10,24 @@ Drop in bank statements (PDF, including password-protected ones, CSV or Excel). 
 
 Transfers between your own accounts are left out of every total.
 
+## Works with any bank
+
+| Bank | Status |
+|---|---|
+| HDFC, SBI, ICICI | Built-in profiles, tested on synthetic statements in each bank's layout |
+| Axis, Kotak, Bank of Baroda, PNB, Canara, IDFC FIRST | **Beta** profiles, built from their published column titles; marked "beta" in the app |
+| Anything else | The generic reader. If it can't tell the columns apart, the **Fix columns** wizard asks you once |
+
+**Fix columns** (`src/components/MapColumns.tsx`) shows the statement as a table and pre-fills its best guess for each column: Date, Description, Money out/in, Amount + Dr/Cr, Balance. Every change is re-checked against the running balance on the spot ("Balances check out (100%)"). Next time, a layout you taught is recognised by its column titles alone and applied automatically. That memory is part of the opt-in rules, and it never contains statement data.
+
+**Inspect** (on each statement) shows:
+- which bank profile was used
+- how each column was read
+- the balance-check score
+- the rows that didn't add up
+
+For PDFs with no recognisable column titles, the columns are found from the whitespace between them (`inferBands` in `src/engine/gridView.ts`).
+
 ## The privacy promise, and how it's enforced
 
 | Layer | What it does |
@@ -48,7 +66,7 @@ Put your own real statements in `fixtures/private/`, which is gitignored. Load t
 ## Tests
 
 ```bash
-npm test           # Vitest: parsing, categories, self-transfers, recurring, compare math
+npm test           # Vitest: parsing (9 bank layouts), column wizard guesses, saved layouts, categories, self-transfers, recurring
 npm run e2e        # Playwright against the production build: zero-network, password PDF,
                    # scanned PDF, offline reload, storage, recategorize + undo, dark mode, 375px phone
 npm run lint

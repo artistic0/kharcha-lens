@@ -1,0 +1,15 @@
+{
+  "id": "axis",
+  "name": "Axis Bank",
+  "beta": true,
+  "detect": ["AXIS\\s*BANK", "\\bUTIB0[A-Z0-9]{6}\\b"],
+  "continuation": "below",
+  "columns": {
+    "date": ["tran date", "transaction date"],
+    "narration": ["particulars"],
+    "ref": ["chq no", "chqno", "cheque no"],
+    "debit": ["debit", "dr"],
+    "credit": ["credit", "cr"],
+    "balance": ["balance", "bal"]
+  }
+}

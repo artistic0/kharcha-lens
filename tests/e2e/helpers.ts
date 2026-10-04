@@ -62,3 +62,26 @@ export async function recategorize(page: Page, search: string, category: string)
   await page.keyboard.press('Escape')
   await sheet.waitFor({ state: 'hidden' })
 }
+
+const inr2 = new Intl.NumberFormat('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+const dmy = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}/${iso.slice(0, 4)}`
+const quote = (s: string) => `"${s.replace(/"/g, '""')}"`
+
+/** Spending account B as a CSV whose column titles no bank uses. */
+export function unknownLayoutCsv() {
+  const t = sample.B.txns
+  const body = [
+    `Holder,${quote(sample.B.holder)}`,
+    `Acct,${quote(`XXXX${sample.B.last4}`)}`,
+    '',
+    'When,What,Out,In,Left',
+    ...t.map((x) => [dmy(x.date), quote(x.narration), x.debit ? quote(inr2.format(x.debit / 100)) : '', x.credit ? quote(inr2.format(x.credit / 100)) : '', quote(inr2.format(x.balance / 100))].join(',')),
+  ].join('\n')
+  return { name: 'coop-bank.csv', mimeType: 'text/csv', buffer: Buffer.from(body) }
+}
+
+/** "Spent" for account B alone, formatted like the app. */
+export function expectedSpendB(): string {
+  const paise = sample.B.txns.filter((t) => SPEND.has(t.expect)).reduce((n, t) => n + t.debit, 0)
+  return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(paise / 100)
+}

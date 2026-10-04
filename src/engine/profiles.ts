@@ -1,6 +1,12 @@
+import axis from './profiles/axis.json'
+import bob from './profiles/bob.json'
+import canara from './profiles/canara.json'
 import generic from './profiles/generic.json'
 import hdfc from './profiles/hdfc.json'
 import icici from './profiles/icici.json'
+import idfc from './profiles/idfc.json'
+import kotak from './profiles/kotak.json'
+import pnb from './profiles/pnb.json'
 import sbi from './profiles/sbi.json'
 
 export type Role =
@@ -23,6 +29,8 @@ export const ROLES: Role[] = [
 interface ProfileJson {
   id: string
   name: string
+  /** Built from documented layouts, not yet checked against real statements. */
+  beta?: boolean
   detect: string[]
   continuation?: 'below' | 'nearest'
   columns?: Partial<Record<Role, string[]>>
@@ -35,6 +43,7 @@ interface ProfileJson {
 export interface BankProfile {
   id: string
   name: string
+  beta: boolean
   detect: RegExp[]
   continuation: 'below' | 'nearest'
   /** Normalized aliases per role, bank-specific first, then generic. */
@@ -69,6 +78,7 @@ function build(p: ProfileJson, base?: ProfileJson): BankProfile {
   return {
     id: p.id,
     name: p.name,
+    beta: !!p.beta,
     detect: rx(p.detect),
     continuation: p.continuation ?? base?.continuation ?? 'below',
     columns,
@@ -81,7 +91,9 @@ function build(p: ProfileJson, base?: ProfileJson): BankProfile {
 
 const genericJson = generic as ProfileJson
 export const GENERIC_PROFILE = build(genericJson, genericJson)
-export const PROFILES: BankProfile[] = [hdfc, sbi, icici].map((p) => build(p as ProfileJson, genericJson))
+export const PROFILES: BankProfile[] = [hdfc, sbi, icici, axis, kotak, bob, pnb, canara, idfc].map((p) => build(p as ProfileJson, genericJson))
+
+export const PROFILE_BY_ID: Record<string, BankProfile> = Object.fromEntries(PROFILES.map((p) => [p.id, p]))
 
 /** Pick the bank whose detect patterns match the statement's header text. */
 export function detectProfile(headerText: string): BankProfile {

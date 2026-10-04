@@ -19,6 +19,7 @@ import { Dropzone } from './components/Dropzone'
 import { Filters } from './components/Filters'
 import { LogoMark } from './components/LogoMark'
 import { Jobs } from './components/Jobs'
+import { MapColumns } from './components/MapColumns'
 import { Button, Dialog, Sheet } from './components/ui'
 import { useRequestsSinceLoad } from './networkWatch'
 import { useStore, type View } from './store'
@@ -354,5 +355,10 @@ export default function App() {
 }
 
 function Frame({ children }: { children: ReactNode }) {
-  return <div className="min-h-screen bg-page text-ink">{children}</div>
+  return (
+    <div className="min-h-screen bg-page text-ink">
+      {children}
+      <MapColumns />
+    </div>
+  )
 }

@@ -35,6 +35,15 @@ jobs:
       - name: Lint (fails on any network API in app code)
         run: npm run lint
 
+      - name: Install Chromium for end-to-end tests
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests (zero network requests, wizard, offline, phone layout)
+        run: npm run e2e
+
+      - name: End-to-end tests as GitHub Pages serves the site (no headers, sub-path)
+        run: npm run e2e:ghpages
+
       - name: Build for https://<user>.github.io/<repo>/
         run: npm run build
         env:

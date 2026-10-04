@@ -1,0 +1,15 @@
+{
+  "id": "idfc",
+  "name": "IDFC FIRST Bank",
+  "beta": true,
+  "detect": ["IDFC\\s*FIRST", "\\bIDFB0[A-Z0-9]{6}\\b"],
+  "continuation": "below",
+  "columns": {
+    "date": ["transaction date", "txn date"],
+    "narration": ["particulars", "narration"],
+    "ref": ["cheque no", "chq no"],
+    "debit": ["debit", "withdrawal"],
+    "credit": ["credit", "deposit"],
+    "balance": ["balance"]
+  }
+}

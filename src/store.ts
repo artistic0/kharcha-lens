@@ -1,5 +1,7 @@
 import { create } from 'zustand'
 import type { Filter } from './engine/aggregate'
+import type { ColumnMapping, GridView } from './engine/gridView'
+import { parseMapped, toCustomLayout } from './engine/parse'
 import { emptyRules, type CategoryId, type ParseResult, type UserRules } from './engine/types'
 import { ingestFile } from './ingest'
 import { sampleResults } from './sample/sampleResults'
@@ -13,6 +15,16 @@ export interface Job {
   passwordWrong?: boolean
   message?: string
   anonymizedLayout?: string
+  /** The file as a grid (memory only), so the column wizard can open on a failed file. */
+  view?: GridView
+}
+
+/** What the column wizard is working on: a failed job or an already-read statement. */
+export interface MappingTarget {
+  id: string
+  fileName: string
+  view: GridView
+  bankName?: string
 }
 
 const RULES_KEY = 'kharchalens.rules.v1'
@@ -51,6 +63,9 @@ interface State {
   categoryFocus: CategoryId | null
   addOpen: boolean
   setAddOpen: (open: boolean) => void
+  mappingTarget: MappingTarget | null
+  openMapping: (t: MappingTarget | null) => void
+  applyMapping: (t: MappingTarget, mapping: ColumnMapping, opts: { save: boolean; name: string }) => void
   addFiles: (files: File[]) => Promise<void>
   submitPassword: (jobId: string, password: string) => Promise<void>
   dismissJob: (jobId: string) => void
@@ -76,7 +91,7 @@ export const useStore = create<State>((set, get) => {
   }
 
   async function run(jobId: string, file: File, password?: string) {
-    const outcome = await ingestFile(file, jobId, password)
+    const outcome = await ingestFile(file, jobId, password, get().rules.customLayouts)
     if (outcome.ok) {
       pendingFiles.delete(jobId)
       set((s) => ({
@@ -96,7 +111,13 @@ export const useStore = create<State>((set, get) => {
     set((s) => ({
       jobs: s.jobs.map((j) =>
         j.id === jobId
-          ? { ...j, status: 'error', message: outcome.message, anonymizedLayout: 'anonymizedLayout' in outcome ? outcome.anonymizedLayout : undefined }
+          ? {
+              ...j,
+              status: 'error',
+              message: outcome.message,
+              anonymizedLayout: 'anonymizedLayout' in outcome ? outcome.anonymizedLayout : undefined,
+              view: 'view' in outcome ? outcome.view : undefined,
+            }
           : j,
       ),
     }))
@@ -113,6 +134,21 @@ export const useStore = create<State>((set, get) => {
     categoryFocus: null,
     addOpen: false,
     setAddOpen: (addOpen) => set({ addOpen }),
+    mappingTarget: null,
+    openMapping: (mappingTarget) => set({ mappingTarget }),
+    applyMapping(t, mapping, opts) {
+      const name = opts.name.trim()
+      const result = parseMapped(t.fileName, t.view, mapping, t.id, name || t.bankName)
+      set((s) => ({
+        results: [...s.results.filter((r) => r.statement.id !== t.id), result],
+        jobs: s.jobs.filter((j) => j.id !== t.id),
+        mappingTarget: null,
+      }))
+      if (opts.save) {
+        const layout = toCustomLayout(t.view, mapping, name || t.bankName || 'My bank')
+        updateRules((r) => ({ ...r, customLayouts: [...r.customLayouts.filter((l) => l.fingerprint !== layout.fingerprint), layout] }))
+      }
+    },
 
     async addFiles(files) {
       const jobs: Job[] = files.map((f) => ({ id: crypto.randomUUID().slice(0, 8), name: f.name, status: 'reading' }))
@@ -143,7 +179,7 @@ export const useStore = create<State>((set, get) => {
     wipe() {
       pendingFiles.clear()
       persist(emptyRules(), false)
-      set({ jobs: [], results: [], rules: emptyRules(), rememberRules: false, filter: { accounts: null }, categoryFocus: null, view: 'overview', addOpen: false })
+      set({ jobs: [], results: [], rules: emptyRules(), rememberRules: false, filter: { accounts: null }, categoryFocus: null, view: 'overview', addOpen: false, mappingTarget: null })
     },
     setView: (view) => set({ view }),
     setFilter: (f) => set((s) => ({ filter: { ...s.filter, ...f } })),

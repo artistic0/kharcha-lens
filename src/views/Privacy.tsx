@@ -91,6 +91,9 @@ export function Privacy() {
         KharchaLens shows what’s in your statements. It doesn’t recommend investments or products, and it isn’t affiliated with any bank or with NPCI. Categories are best guesses — check the
         “why” on any transaction and fix it in one tap.
       </p>
+      <p className="px-1 text-xs text-muted">
+        Build <code className="text-ink">{__APP_VERSION__}</code> — the commit on GitHub this site was built from, so anyone can check the code that is running.
+      </p>
     </div>
   )
 }

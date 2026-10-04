@@ -1,0 +1,15 @@
+{
+  "id": "canara",
+  "name": "Canara Bank",
+  "beta": true,
+  "detect": ["CANARA\\s*BANK", "\\bCNRB0[A-Z0-9]{6}\\b"],
+  "continuation": "below",
+  "columns": {
+    "date": ["txn date", "trans date", "transaction date"],
+    "narration": ["description", "particulars"],
+    "ref": ["cheque no", "chq no"],
+    "debit": ["debit", "withdrawals"],
+    "credit": ["credit", "deposits"],
+    "balance": ["balance"]
+  }
+}

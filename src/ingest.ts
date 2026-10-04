@@ -1,5 +1,6 @@
 import * as Comlink from 'comlink'
 import * as pdfjs from 'pdfjs-dist'
+import type { CustomLayout } from './engine/gridView'
 import { extractPdfText, PdfPasswordError, type PdfJsLike } from './engine/pdfText'
 import type { EngineApi, WorkerOutcome } from './worker/engine.worker'
 
@@ -27,7 +28,7 @@ export function kindOf(file: File): FileKind {
 }
 
 /** Read a statement file entirely in this tab. The password is used once and dropped. */
-export async function ingestFile(file: File, id: string, password?: string): Promise<IngestOutcome> {
+export async function ingestFile(file: File, id: string, password?: string, layouts: CustomLayout[] = []): Promise<IngestOutcome> {
   const kind = kindOf(file)
   if (!kind) {
     return { ok: false, code: 'UNSUPPORTED', message: 'Only PDF, CSV, XLS and XLSX statements are supported.' }
@@ -41,7 +42,7 @@ export async function ingestFile(file: File, id: string, password?: string): Pro
       if (e instanceof PdfPasswordError) return { ok: false, code: 'PASSWORD', message: e.message, incorrect: e.incorrect }
       return { ok: false, code: 'FAILED', message: `Couldn't read this PDF: ${e instanceof Error ? e.message : String(e)}` }
     }
-    return engine.parsePdf(file.name, pages, id)
+    return engine.parsePdf(file.name, pages, id, layouts)
   }
-  return engine.parseSheet(file.name, Comlink.transfer(bytes, [bytes]), kind, id)
+  return engine.parseSheet(file.name, Comlink.transfer(bytes, [bytes]), kind, id, layouts)
 }

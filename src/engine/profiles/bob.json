@@ -1,0 +1,15 @@
+{
+  "id": "bob",
+  "name": "Bank of Baroda",
+  "beta": true,
+  "detect": ["BANK\\s*OF\\s*BARODA", "\\bBARB0[A-Z0-9]{6}\\b"],
+  "continuation": "below",
+  "columns": {
+    "date": ["tran date", "txn date", "date"],
+    "narration": ["narration", "description", "particulars"],
+    "ref": ["chq no", "cheque no"],
+    "debit": ["withdrawal dr", "withdrawal", "debit"],
+    "credit": ["deposit cr", "deposit", "credit"],
+    "balance": ["balance"]
+  }
+}

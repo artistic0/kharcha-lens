@@ -58,6 +58,7 @@ function Layout({ text }: { text: string }) {
 export function Jobs({ showDone = false }: { showDone?: boolean }) {
   const jobs = useStore((s) => s.jobs).filter((j) => showDone || j.status !== 'done')
   const dismiss = useStore((s) => s.dismissJob)
+  const openMapping = useStore((s) => s.openMapping)
   if (!jobs.length) return null
   return (
     <ul className="space-y-2" aria-live="polite">
@@ -95,6 +96,11 @@ export function Jobs({ showDone = false }: { showDone?: boolean }) {
             {j.status === 'error' && (
               <>
                 <p className="mt-2 text-sm text-ink-2">{j.message}</p>
+                {j.view && (
+                  <Button variant="primary" size="sm" className="mt-3" onClick={() => openMapping({ id: j.id, fileName: j.name, view: j.view! })}>
+                    Fix columns
+                  </Button>
+                )}
                 {j.anonymizedLayout && <Layout text={j.anonymizedLayout} />}
               </>
             )}

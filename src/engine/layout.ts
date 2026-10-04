@@ -57,7 +57,8 @@ export function chunks(line: Line): Chunk[] {
     const last = out[out.length - 1]
     const gap = last ? it.x - last.x1 : Infinity
     if (last && gap < Math.max(3, it.h * 0.6)) {
-      last.text += (gap > it.h * 0.15 ? ' ' : '') + it.s.trim()
+      // Overlapping runs are separate words that collided ("Transaction DateValue Date").
+      last.text += (gap > it.h * 0.15 || gap < -0.5 ? ' ' : '') + it.s.trim()
       last.x1 = it.x + it.w
     } else {
       out.push({ text: it.s.trim(), x0: it.x, x1: it.x + it.w })
@@ -67,7 +68,8 @@ export function chunks(line: Line): Chunk[] {
 }
 
 export interface ColumnBand {
-  role: Role
+  /** 'ignore': a titled column we don't read (branch code, serial no.); its text is dropped. */
+  role: Role | 'ignore'
   x0: number
   x1: number
 }
@@ -79,7 +81,8 @@ export function headerBands(line: Line, profile: BankProfile): ColumnBand[] | nu
     profile,
   )
   if (!cols) return null
-  return cols.map((c) => ({ role: c.role, x0: cs[c.index].x0, x1: cs[c.index].x1 })).sort((a, b) => a.x0 - b.x0)
+  const roleAt = new Map(cols.map((c) => [c.index, c.role]))
+  return cs.map((c, i) => ({ role: roleAt.get(i) ?? ('ignore' as const), x0: c.x0, x1: c.x1 })).sort((a, b) => a.x0 - b.x0)
 }
 
 const NUMERIC_ROLES: Role[] = ['debit', 'credit', 'amount', 'balance']
@@ -93,11 +96,11 @@ export type RoleRow = Partial<Record<Role, string>> & { page?: number; y?: numbe
  */
 export function assignRoles(line: Line, bands: ColumnBand[]): RoleRow {
   const parts: Partial<Record<Role, string[]>> = {}
-  const numericBands = bands.filter((b) => NUMERIC_ROLES.includes(b.role))
+  const numericBands = bands.filter((b) => b.role !== 'ignore' && NUMERIC_ROLES.includes(b.role))
   for (const it of line.items) {
     const s = it.s.trim()
     if (!s) continue
-    let role: Role
+    let role: Role | 'ignore'
     if (looksLikeAmount(s) && numericBands.length) {
       const cx = it.x + it.w / 2
       role = numericBands.reduce((best, b) =>
@@ -108,12 +111,13 @@ export function assignRoles(line: Line, bands: ColumnBand[]): RoleRow {
       let owner = bands[0]
       for (const b of bands) if (b.x0 - pad <= it.x) owner = b
       // A bare "Cr"/"Dr" marker belongs with the amount just before it.
-      if (/^(CR|DR)\.?$/i.test(s) && NUMERIC_ROLES.includes(owner.role) === false) {
+      if (/^(CR|DR)\.?$/i.test(s) && (owner.role === 'ignore' || !NUMERIC_ROLES.includes(owner.role))) {
         const prev = numericBands.filter((b) => b.x0 <= it.x).pop()
         if (prev) owner = prev
       }
       role = owner.role
     }
+    if (role === 'ignore') continue
     ;(parts[role] ??= []).push(s)
   }
   const h = Math.max(...line.items.map((it) => it.h))

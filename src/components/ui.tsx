@@ -129,7 +129,23 @@ export function Empty({ icon, title, children, action }: { icon?: ReactNode; tit
 }
 
 /** Modal built on <dialog>: focus trap, Esc to close and backdrop come from the browser. */
-export function Dialog({ open, onClose, title, children, footer, wide = false }: { open: boolean; onClose: () => void; title: string; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
+export function Dialog({
+  open,
+  onClose,
+  title,
+  children,
+  footer,
+  wide = false,
+  xl = false,
+}: {
+  open: boolean
+  onClose: () => void
+  title: string
+  children: ReactNode
+  footer?: ReactNode
+  wide?: boolean
+  xl?: boolean
+}) {
   const ref = useRef<HTMLDialogElement>(null)
   useEffect(() => {
     const d = ref.current
@@ -145,7 +161,7 @@ export function Dialog({ open, onClose, title, children, footer, wide = false }:
         if (e.target === ref.current) onClose()
       }}
       aria-label={title}
-      className={`m-auto w-[calc(100%-24px)] ${wide ? 'max-w-2xl' : 'max-w-lg'} rounded-3xl border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm`}
+      className={`m-auto w-[calc(100%-24px)] ${xl ? 'max-w-5xl' : wide ? 'max-w-2xl' : 'max-w-lg'} rounded-3xl border border-line bg-surface p-0 text-ink shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm`}
     >
       {open && (
         <div className="flex max-h-[85vh] flex-col">

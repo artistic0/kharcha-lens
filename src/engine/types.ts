@@ -1,3 +1,5 @@
+import type { CustomLayout, GridView } from './gridView'
+
 /** Money is always integer paise so sums never pick up float error. */
 export type Paise = number
 
@@ -60,12 +62,16 @@ export interface Statement {
   reconcileRate: number | null
   /** 1-based row numbers that failed the balance check. */
   failedRows: number[]
+  /** Ids of the transactions on those rows (for the inspector). */
+  failedTxnIds?: string[]
   warnings: string[]
 }
 
 export interface ParseResult {
   statement: Statement
   txns: Txn[]
+  /** The file as a grid (memory only): powers the inspector and the column wizard. */
+  view?: GridView
 }
 
 /** Positioned text from one PDF page, y measured from the top. */
@@ -126,6 +132,8 @@ export interface UserRules {
   notSelfPayees: string[]
   /** Last-4 digits of the user's other accounts/cards, or own VPAs */
   ownAccounts: string[]
+  /** Statement layouts the user taught the app with the column wizard (no data inside). */
+  customLayouts: CustomLayout[]
 }
 
 export const emptyRules = (): UserRules => ({
@@ -133,6 +141,7 @@ export const emptyRules = (): UserRules => ({
   selfPayees: [],
   notSelfPayees: [],
   ownAccounts: [],
+  customLayouts: [],
 })
 
 export interface SelfInfo {

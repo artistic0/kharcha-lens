@@ -54,23 +54,32 @@ interface TableSpec {
   meta: string[]
   footer?: string
   summary?: string[]
+  /** Print the bank's header block on every page, like many real statements do. */
+  repeatMeta?: boolean
+  /** Landscape A4, as banks use for wide tables. */
+  landscape?: boolean
 }
 
-async function renderTablePdf(txns: SynthTxn[], spec: TableSpec, password?: string): Promise<Uint8Array> {
+export async function renderTablePdf(txns: SynthTxn[], spec: TableSpec, password?: string): Promise<Uint8Array> {
   const doc = await PDFDocument.create()
   const font = await doc.embedFont(StandardFonts.Helvetica)
   const bold = await doc.embedFont(StandardFonts.HelveticaBold)
   const size = 7.5
   const lh = 9.5
-  let page = doc.addPage([595, 842])
-  let y = 800
+  const pageSize: [number, number] = spec.landscape ? [842, 595] : [595, 842]
+  const top = pageSize[1] - 42
+  let page = doc.addPage(pageSize)
+  let y = top
   let pageNo = 1
 
-  for (const [i, m] of spec.meta.entries()) {
-    text(page, m, 30, y, i === 0 ? bold : font, i === 0 ? 11 : 8.5)
-    y -= i === 0 ? 16 : 11
+  const drawMeta = () => {
+    for (const [i, m] of spec.meta.entries()) {
+      text(page, m, 30, y, i === 0 ? bold : font, i === 0 ? 11 : 8.5)
+      y -= i === 0 ? 16 : 11
+    }
+    y -= 8
   }
-  y -= 8
+  drawMeta()
   const header = () => {
     for (const c of spec.cols) text(page, c.title, c.x, y, bold, size, c.align)
     y -= lh + 3
@@ -86,9 +95,10 @@ async function renderTablePdf(txns: SynthTxn[], spec: TableSpec, password?: stri
     const need = narr.length * lh + 2
     if (y - need < 50) {
       footer()
-      page = doc.addPage([595, 842])
+      page = doc.addPage(pageSize)
       pageNo++
-      y = 800
+      y = top
+      if (spec.repeatMeta) drawMeta()
       header()
     }
     spec.cols.forEach((c, ci) => {
@@ -102,9 +112,9 @@ async function renderTablePdf(txns: SynthTxn[], spec: TableSpec, password?: stri
     y -= 10
     if (y < 80) {
       footer()
-      page = doc.addPage([595, 842])
+      page = doc.addPage(pageSize)
       pageNo++
-      y = 800
+      y = top
     }
     for (const s of spec.summary) {
       text(page, s, 30, y, font, 8)
@@ -121,7 +131,10 @@ export function slice(acct: SynthAccount, from?: string, to?: string): SynthTxn[
 }
 
 /** HDFC-like: Date | Narration | Chq./Ref.No. | Value Dt | Withdrawal Amt. | Deposit Amt. | Closing Balance */
-export function renderHdfcPdf(acct: SynthAccount, opts: { from?: string; to?: string; password?: string } = {}) {
+export function renderHdfcPdf(
+  acct: SynthAccount,
+  opts: { from?: string; to?: string; password?: string; titles?: string[]; bankLine?: string; repeatMeta?: boolean } = {},
+) {
   const txns = slice(acct, opts.from, opts.to)
   const debits = txns.reduce((n, t) => n + t.debit, 0)
   const credits = txns.reduce((n, t) => n + t.credit, 0)
@@ -129,7 +142,7 @@ export function renderHdfcPdf(acct: SynthAccount, opts: { from?: string; to?: st
     txns,
     {
       meta: [
-        'HDFC BANK Ltd.',
+        opts.bankLine ?? 'HDFC BANK Ltd.',
         `${acct.holderTitle} ${acct.holder}`,
         '12 MG ROAD, BANGALORE 560001',
         `Account No : ${acct.accountNumber}        IFSC : HDFC0000123`,
@@ -143,7 +156,8 @@ export function renderHdfcPdf(acct: SynthAccount, opts: { from?: string; to?: st
         { title: 'Withdrawal Amt.', x: 440, align: 'right' },
         { title: 'Deposit Amt.', x: 500, align: 'right' },
         { title: 'Closing Balance', x: 565, align: 'right' },
-      ],
+      ].map((c, i) => ({ ...c, title: opts.titles?.[i] ?? c.title })),
+      repeatMeta: opts.repeatMeta,
       narrationCol: 1,
       narrationWidth: 188,
       cells: (t) => [

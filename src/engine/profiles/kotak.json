@@ -1,0 +1,15 @@
+{
+  "id": "kotak",
+  "name": "Kotak Mahindra Bank",
+  "beta": true,
+  "detect": ["KOTAK\\s*MAHINDRA", "\\bKKBK0[A-Z0-9]{6}\\b"],
+  "continuation": "below",
+  "columns": {
+    "date": ["date", "transaction date"],
+    "narration": ["narration", "description"],
+    "ref": ["chq/ref no", "chq/ref"],
+    "debit": ["withdrawal dr", "withdrawal", "debit"],
+    "credit": ["deposit cr", "deposit", "credit"],
+    "balance": ["balance"]
+  }
+}
