@@ -1,0 +1,24 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "typescript", "oxc"],
+  "ignorePatterns": ["dist", "test-results"],
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/only-export-components": ["warn", { "allowConstantExport": true }]
+  },
+  "overrides": [
+    {
+      "files": ["src/**"],
+      "rules": {
+        "no-restricted-globals": [
+          "error",
+          { "name": "fetch", "message": "KharchaLens never makes network requests. Statement data must stay on the device." },
+          { "name": "XMLHttpRequest", "message": "KharchaLens never makes network requests." },
+          { "name": "WebSocket", "message": "KharchaLens never makes network requests." },
+          { "name": "EventSource", "message": "KharchaLens never makes network requests." },
+          { "name": "WebTransport", "message": "KharchaLens never makes network requests." }
+        ]
+      }
+    }
+  ]
+}

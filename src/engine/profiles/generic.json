@@ -1,0 +1,44 @@
+{
+  "id": "generic",
+  "name": "Bank statement",
+  "detect": [],
+  "continuation": "below",
+  "columns": {
+    "date": ["date", "txn date", "transaction date", "tran date", "trans date", "posting date", "post date", "txn dt", "tran dt", "book date"],
+    "valueDate": ["value date", "value dt", "val date", "val dt"],
+    "narration": ["narration", "description", "particulars", "transaction remarks", "remarks", "details", "transaction details", "transaction description", "transaction particulars"],
+    "ref": ["chq/ref no", "chq ref no", "chq/ref number", "ref no/cheque no", "ref no/chq no", "cheque number", "cheque no", "chq no", "chq/ref", "ref no", "reference no", "reference number", "instrument id", "instrument no", "utr no"],
+    "debit": ["withdrawal amt", "withdrawal amount", "withdrawal", "withdrawals", "debit", "debit amount", "debits", "dr amount", "debit amt", "dr", "money out", "paid out"],
+    "credit": ["deposit amt", "deposit amount", "deposit", "deposits", "credit", "credit amount", "credits", "cr amount", "credit amt", "cr", "money in", "paid in"],
+    "amount": ["amount", "transaction amount", "txn amount", "amt"],
+    "drcr": ["dr/cr", "cr/dr", "dr / cr", "debit/credit", "type", "txn type", "transaction type"],
+    "balance": ["closing balance", "balance", "running balance", "available balance", "bal"],
+    "serial": ["s no", "sl no", "sr no", "s no.", "serial no", "#"]
+  },
+  "holder": [
+    "(?:ACCOUNT HOLDER NAME|ACCOUNT NAME|CUSTOMER NAME|A/C NAME|NAME)\\s*:?\\s*(?:MR\\.?|MRS\\.?|MS\\.?|MISS|SHRI|SMT\\.?|DR\\.?)?\\s*([A-Z][A-Z .]{2,60}?)\\s*(?:\\s{2,}|$|ACCOUNT|ADDRESS|CUSTOMER|CIF|BRANCH|JOINT)",
+    "^(?:MR|MRS|MS|MISS|SHRI|SMT|DR)\\.?\\s+([A-Z][A-Z .]{2,60}?)(?:\\s{2,}|$)"
+  ],
+  "account": [
+    "(?:ACCOUNT|A/C)\\s*(?:NO|NUMBER|#)\\.?\\s*:?\\s*([X*\\d][X*\\d -]{3,30}\\d)"
+  ],
+  "stopLines": [
+    "^STATEMENT SUMMARY",
+    "^\\*+\\s*END OF STATEMENT",
+    "^END OF STATEMENT",
+    "^LEGENDS?\\b",
+    "^ABBREVIATIONS"
+  ],
+  "skipLines": [
+    "THIS IS A (?:COMPUTER|SYSTEM) GENERATED",
+    "^\\*+\\s*THIS\\b",
+    "^PAGE\\s*(?:NO)?\\s*\\.?\\s*:?\\s*\\d+",
+    "^\\d+\\s*(?:OF|/)\\s*\\d+$",
+    "^(?:TOTAL|GRAND TOTAL|TOTALS)\\b",
+    "^CLOSING BALANCE",
+    "^B/F\\b",
+    "^C/F\\b",
+    "^BROUGHT FORWARD",
+    "^CARRIED FORWARD"
+  ]
+}

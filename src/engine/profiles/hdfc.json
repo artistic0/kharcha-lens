@@ -1,0 +1,19 @@
+{
+  "id": "hdfc",
+  "name": "HDFC Bank",
+  "detect": ["HDFC\\s*BANK", "\\bHDFC0\\d{6}\\b"],
+  "continuation": "below",
+  "columns": {
+    "ref": ["chq/ref no"],
+    "valueDate": ["value dt"],
+    "debit": ["withdrawal amt"],
+    "credit": ["deposit amt"],
+    "balance": ["closing balance"]
+  },
+  "holder": [
+    "^(?:MR|MRS|MS|MISS|M/S|SHRI|SMT|DR)\\.?\\s+([A-Z][A-Z .]{2,60}?)(?:\\s{2,}|$)"
+  ],
+  "account": [
+    "ACCOUNT\\s*NO\\s*:?\\s*([X*\\d]{6,20})"
+  ]
+}

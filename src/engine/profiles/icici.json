@@ -1,0 +1,19 @@
+{
+  "id": "icici",
+  "name": "ICICI Bank",
+  "detect": ["ICICI\\s*BANK", "\\bICIC0\\d{6}\\b"],
+  "continuation": "below",
+  "columns": {
+    "date": ["transaction date"],
+    "narration": ["transaction remarks"],
+    "ref": ["cheque number"],
+    "debit": ["withdrawal amount"],
+    "credit": ["deposit amount"]
+  },
+  "holder": [
+    "ACCOUNT\\s*NAME\\s*:?\\s*(?:MR\\.?|MRS\\.?|MS\\.?|SHRI|SMT\\.?)?\\s*([A-Z][A-Z .]{2,60}?)\\s*(?:\\s{2,}|$)"
+  ],
+  "account": [
+    "ACCOUNT\\s*NUMBER\\s*:?\\s*([X*\\d]{6,20})"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "id": "sbi",
+  "name": "State Bank of India",
+  "detect": ["STATE\\s*BANK\\s*OF\\s*INDIA", "\\bSBIN0\\d{6}\\b"],
+  "continuation": "below",
+  "columns": {
+    "date": ["txn date"],
+    "narration": ["description"],
+    "ref": ["ref no/cheque no"]
+  },
+  "holder": [
+    "ACCOUNT\\s*NAME\\s*:?\\s*(?:MR\\.?|MRS\\.?|MS\\.?|SHRI|SMT\\.?)?\\s*([A-Z][A-Z .]{2,60}?)\\s*(?:\\s{2,}|$)"
+  ],
+  "account": [
+    "ACCOUNT\\s*NUMBER\\s*:?\\s*([X*\\d]{6,20})"
+  ]
+}

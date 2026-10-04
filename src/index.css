@@ -1,0 +1,232 @@
+@import 'tailwindcss';
+
+/* Inter, self-hosted (OFL). Only the latin + latin-ext subsets (₹ lives in latin-ext);
+   both are loaded at startup so nothing is fetched after the page is ready. */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('./assets/fonts/inter-latin-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url('./assets/fonts/inter-latin-ext-wght-normal.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ---------------------------------------------------------------------------
+   Tokens. Light by default; dark from the OS unless forced by the toggle.
+   Chart colors use the validated reference palette (fixed slot order).
+   --------------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+  --page: #f4f5f9;
+  --surface: #ffffff;
+  --surface-2: #f1f3f8;
+  --surface-3: #e8ebf3;
+  --ink: #0f1222;
+  --ink-2: #474d66;
+  --muted: #676d86;
+  --line: #e4e7ef;
+  --line-strong: #d3d7e3;
+  --brand: #4f46e5;
+  --brand-ink: #ffffff;
+  --brand-soft: #eef0ff;
+  --brand-text: #4338ca;
+  --pos: #047857;
+  --neg: #be123c;
+  --hero-1: #1e1b4b;
+  --hero-2: #3b35b5;
+  --shadow: 0 1px 2px rgba(15, 18, 34, 0.04), 0 8px 24px -12px rgba(15, 18, 34, 0.1);
+  --good-mark: #0ca30c;
+  --good: #006300;
+  --warning: #fab219;
+  --critical: #d03b3b;
+  --emph-gray: #d5d8e3;
+  --axis: #c9cdd9;
+
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #eda100;
+  --series-5: #e87ba4;
+  --series-6: #008300;
+  --series-7: #4a3aa7;
+  --series-other: #b8bccb;
+
+  --seq-100: #cde2fb;
+  --seq-200: #9ec5f4;
+  --seq-300: #6da7ec;
+  --seq-400: #3987e5;
+  --seq-500: #256abf;
+  --seq-600: #184f95;
+  --seq-700: #0d366b;
+  --seq-zero: #f1f3f8;
+
+  --pair-a: #9ec5f4;
+  --pair-b: #184f95;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --page: #0b0c12;
+    --surface: #15171f;
+    --surface-2: #1c1f2a;
+    --surface-3: #252938;
+    --ink: #f3f4f8;
+    --ink-2: #b6bbcd;
+    --muted: #8d93aa;
+    --line: #262a38;
+    --line-strong: #333849;
+    --brand: #8b85ff;
+    --brand-ink: #0b0c12;
+    --brand-soft: #1f1d3d;
+    --brand-text: #a5a0ff;
+    --pos: #34d399;
+    --neg: #fb7185;
+    --hero-1: #17153a;
+    --hero-2: #2e2a8a;
+    --shadow: 0 0 0 1px rgba(255, 255, 255, 0.02);
+    --good: #0ca30c;
+    --emph-gray: #343949;
+    --axis: #3a3f50;
+    --series-1: #3987e5;
+    --series-2: #d95926;
+    --series-3: #199e70;
+    --series-4: #c98500;
+    --series-5: #d55181;
+    --series-6: #008300;
+    --series-7: #9085e9;
+    --series-other: #565b6c;
+    --seq-zero: #1c1f2a;
+    --pair-a: #256abf;
+    --pair-b: #9ec5f4;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --page: #0b0c12;
+  --surface: #15171f;
+  --surface-2: #1c1f2a;
+  --surface-3: #252938;
+  --ink: #f3f4f8;
+  --ink-2: #b6bbcd;
+  --muted: #8d93aa;
+  --line: #262a38;
+  --line-strong: #333849;
+  --brand: #8b85ff;
+  --brand-ink: #0b0c12;
+  --brand-soft: #1f1d3d;
+  --brand-text: #a5a0ff;
+  --pos: #34d399;
+  --neg: #fb7185;
+  --hero-1: #17153a;
+  --hero-2: #2e2a8a;
+  --shadow: 0 0 0 1px rgba(255, 255, 255, 0.02);
+  --good: #0ca30c;
+  --emph-gray: #343949;
+  --axis: #3a3f50;
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #c98500;
+  --series-5: #d55181;
+  --series-6: #008300;
+  --series-7: #9085e9;
+  --series-other: #565b6c;
+  --seq-zero: #1c1f2a;
+  --pair-a: #256abf;
+  --pair-b: #9ec5f4;
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-brand: var(--brand);
+  --color-brand-ink: var(--brand-ink);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-text: var(--brand-text);
+  --color-pos: var(--pos);
+  --color-neg: var(--neg);
+  --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+html,
+body {
+  background: var(--page);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+  }
+  .hero {
+    background:
+      radial-gradient(120% 140% at 100% 0%, color-mix(in srgb, var(--hero-2) 85%, transparent) 0%, transparent 60%),
+      linear-gradient(135deg, var(--hero-1), var(--hero-2));
+    color: #ffffff;
+    border-radius: 24px;
+  }
+}
+
+@media (forced-colors: active) {
+  .card,
+  .hero {
+    border: 1px solid CanvasText;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.rise {
+  animation: rise 0.25s ease-out both;
+}
